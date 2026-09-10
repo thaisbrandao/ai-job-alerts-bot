@@ -1,0 +1,299 @@
+{
+  "name": "jobssAI bot",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "https://www.linkedin.com/jobs/search/?currentJobId=4291122972&geoId=107879806&origin=JOB_COLLECTION_PAGE_SEARCH_BUTTON&refresh=true",
+        "responseFormat": "string",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "40226be6-44c1-4811-94cd-9f2f8ef9a708",
+      "name": "Get GetOnBrd Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        3424,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "b908ca28-eb34-48aa-be56-a5b02b7b1263",
+      "name": "Extract Job Links",
+      "type": "n8n-nodes-base.htmlExtract",
+      "typeVersion": 1,
+      "position": [
+        3632,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "21f16048-71d2-44ad-83be-ab4984c91819",
+      "name": "Set Full Links",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 1,
+      "position": [
+        3824,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json[\"link\"] }}",
+        "responseFormat": "string",
+        "jsonParameters": true,
+        "options": {}
+      },
+      "id": "e7395417-ef70-4914-afaa-b3b01db26f47",
+      "name": "Get Job Page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        4000,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bcdb9bc8-22db-4b5f-ac04-f3e99bf91a0b",
+      "name": "Extract Description",
+      "type": "n8n-nodes-base.htmlExtract",
+      "typeVersion": 1,
+      "position": [
+        4192,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "@MyAIJob",
+        "text": "🚀 Nova vaga de IA/ML!\n\n🔗 {{$json[\"link\"]}}\n\n📝 Resumo:\n{{ $json[\"choices\"][0][\"message\"][\"content\"] }}",
+        "additionalFields": {}
+      },
+      "id": "49245308-f89e-4477-a9a6-412f63f28c2f",
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        4704,
+        560
+      ],
+      "webhookId": "54e352ab-ef06-47e3-890c-fdc457349010",
+      "credentials": {
+        "telegramApi": {
+          "id": "bkmeseG5eQVElOTe",
+          "name": "ai job bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 4
+            }
+          ]
+        }
+      },
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        3216,
+        544
+      ],
+      "id": "96f55783-ba12-419e-95ff-eacaffbec17d"
+    },
+    {
+      "parameters": {},
+      "id": "dbee23fa-7bcc-4f53-b5f8-8f3ae0605da3",
+      "name": "Resumir com OpenAI",
+      "type": "n8n-nodes-base.openaiChat",
+      "typeVersion": 1,
+      "position": [
+        4208,
+        320
+      ],
+      "credentials": {},
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4384,
+        768
+      ],
+      "id": "a0c21d96-573d-456a-b278-d0205f248fc6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Resuma em português a seguinte vaga de emprego de forma clara e curta:\n\n{{$json[\"text\"]}}\n\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        4368,
+        544
+      ],
+      "id": "36ff9acb-49aa-47a8-96d5-9a180e0e2072",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        4480,
+        880
+      ],
+      "id": "2b305c15-955a-4b3c-907c-e2ba74aab8ba",
+      "name": "Google Gemini Chat Model"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get GetOnBrd Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Full Links": {
+      "main": [
+        [
+          {
+            "node": "Get Job Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Job Page": {
+      "main": [
+        [
+          {
+            "node": "Extract Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get GetOnBrd Page": {
+      "main": [
+        [
+          {
+            "node": "Extract Job Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Job Links": {
+      "main": [
+        [
+          {
+            "node": "Set Full Links",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Description": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Telegram": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1ef89a21-7004-4c45-b73f-e17f81787983",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "id": "WqnTveYLE76LF3Ps",
+  "tags": [
+    {
+      "createdAt": "2025-07-29T07:54:08.210Z",
+      "updatedAt": "2025-07-29T07:54:08.210Z",
+      "id": "bPGyzupv5fehrRr5",
+      "name": "bot"
+    }
+  ]
+}
