@@ -1,0 +1,84 @@
+{
+  "name": "TELEGRAM BOT",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message",
+          "shipping_query",
+          "pre_checkout_query",
+          "poll",
+          "inline_query",
+          "edited_message",
+          "edited_channel_post",
+          "channel_post",
+          "callback_query",
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "id": "b963b0d7-f625-4922-806e-cb74eec42985",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [
+        -688,
+        -160
+      ],
+      "webhookId": "telegram-test",
+      "credentials": {
+        "telegramApi": {
+          "id": "bkmeseG5eQVElOTe",
+          "name": "ai job bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "✅ Bot conectado: mensaje recibido y respuesta enviada correctamente desde n8n 🚀",
+        "additionalFields": {}
+      },
+      "id": "4a0d4557-5515-4058-baef-03f3f4de4836",
+      "name": "Send Text",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -128
+      ],
+      "webhookId": "07056349-16c5-4c61-bc51-f7685b2c9b95",
+      "credentials": {
+        "telegramApi": {
+          "id": "bkmeseG5eQVElOTe",
+          "name": "ai job bot"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "f8b730cf-5d92-44e2-b7f2-f1412d162c14",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "YOUR_N8N_INSTANCE_ID"
+  },
+  "id": "t6gblzIEULgZTr31",
+  "tags": []
+}
